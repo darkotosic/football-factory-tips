@@ -1,3 +1,4 @@
+# src/evaluate.py
 import json, os, random
 from datetime import datetime, timezone
 
@@ -36,7 +37,25 @@ def _process_ticket_file(name: str):
     _write(name, data)
 
 def run():
-    for fn in ("2plus.json", "3plus.json", "4plus.json"):
+    FILES = [
+        "2plus.json",
+        "2plusbtts.json",
+        "dc.json",
+        "over15.json",
+        "over25.json",
+        "vip3plus.json",
+        "vip4plus.json",
+        "vip3plusbtts.json",
+        "vip4plusbtts.json",
+        "vip3plusdc.json",
+        "vip4plusdc.json",
+        "vip3plusover15.json",
+        "vip4plusover15.json",
+        "vip3plusover25.json",
+        "vip4plusover25.json",
+    ]
+
+    for fn in FILES:
         _process_ticket_file(fn)
 
 if __name__ == "__main__":

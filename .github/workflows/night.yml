@@ -1,12 +1,12 @@
-name: Morning build
+name: Night evaluate
 
 on:
   schedule:
-    - cron: "0 5 * * *"
+    - cron: "0 22 * * *"
   workflow_dispatch:
 
 jobs:
-  build-feed:
+  eval-feed:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -20,12 +20,9 @@ jobs:
         run: |
           pip install -r requirements.txt
 
-      - name: Generate feeds
-        env:
-          API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      - name: Run evaluator
         run: |
-          python -m src.generate
+          python -m src.evaluate
 
       - name: Upload artifact for pages
         uses: actions/upload-pages-artifact@v3

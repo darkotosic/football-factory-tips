@@ -1,2 +1,2 @@
-# football-factory-tips
-Besplatna automatizacija python-api-football-gitpages
+# football-factory
+Daily football feed generator around API-FOOTBALL + optional OpenAI in-depth analysis.

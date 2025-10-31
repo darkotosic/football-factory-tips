@@ -1,2 +1,2 @@
-httpx
-python-dotenv
+requests==2.32.3
+openai==1.54.0

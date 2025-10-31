@@ -1,3 +1,4 @@
+# src/generate.py
 import json, os
 from datetime import datetime, timezone
 from .builders import safe_dc, btts, ou, mw_value, single_analysis
@@ -19,7 +20,12 @@ def run(date: str = None):
     btts_legs = btts.build(date)
     ou_legs = ou.build(date)
     mw_legs = mw_value.build(date)
-    ana_legs = single_analysis.build(date)
+
+    # AI deo ne sme da sruši jutarnji run
+    try:
+        ana_legs = single_analysis.build(date)
+    except Exception as e:
+        ana_legs = [{"error": f"single_analysis_failed: {e}"}]
 
     t2 = compose.make_ticket("2plus", compose.pick_top(dc_legs + ou_legs, 2))
     t3 = compose.make_ticket("3plus", compose.pick_top(dc_legs + btts_legs + ou_legs, 3))

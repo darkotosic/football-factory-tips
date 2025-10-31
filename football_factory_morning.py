@@ -102,31 +102,36 @@ def best_markets_from_odds(raw):
                 if bad(name):
                     continue
                 for v in bet.get("values", []) or []:
-                    val = (v.get("value") or "").strip()
+                    # value ponekad bude int -> prebacujemo u str
+                    raw_val = v.get("value")
+                    val = str(raw_val).strip() if raw_val is not None else ""
                     odd = v.get("odd")
                     try:
                         odd = float(odd)
                     except Exception:
                         continue
-                    # mapiramo u ista imena kao focus_bets
+
                     key_market = None
                     key_name = None
+
                     if name in {"Double Chance","Double chance"}:
                         v2 = val.replace(" ","").upper()
                         if v2 in {"1X","X2","12"}:
                             key_market = "Double Chance"
                             key_name = v2
+
                     elif name in {"Both Teams To Score","BTTS","Both teams to score"}:
                         key_market = "BTTS"
                         key_name = val.title()
+
                     elif name in {"Match Winner","1X2","Result","Full Time Result"}:
                         if val in {"Home","1"}:
                             key_market = "Match Winner"; key_name = "Home"
                         elif val in {"Away","2"}:
                             key_market = "Match Winner"; key_name = "Away"
+
                     elif "Over/Under" in name or "Total Goals" in name:
-                        # normalizacija
-                        vnorm = re.sub(r"\s+", " ", val.title())
+                        vnorm = " ".join(val.title().split())
                         if vnorm in {"Over 1.5","Over 2.5","Under 3.5"}:
                             key_market = "Over/Under"; key_name = vnorm
 
@@ -144,12 +149,11 @@ def build_1x(fixtures):
     for f in fixtures:
         fx=f["fixture"]; lg=f["league"]; tm=f["teams"]
         raw = fetch_odds_raw(fx["id"])
-        odds = best_markets_from_odds(raw)
+        odds = best_markets_from_odds(raw) if raw else {}
         dc = odds.get("Double Chance", {})
         o1x = dc.get("1X"); ox2 = dc.get("X2")
         if o1x:
             if ox2 and o1x > ox2:
-                # hoćemo sigurniji, pa preskačemo 1X ako je skuplja od X2
                 pass
             legs.append({
                 "fixture_id": fx["id"],
@@ -160,6 +164,8 @@ def build_1x(fixtures):
                 "pick": "1X",
                 "odd": float(o1x),
             })
+    ...
+
     # dosta će ih biti → iseckaj u 3 tiketa po 3-4 meča
     random.shuffle(legs)
     tickets = []

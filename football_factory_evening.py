@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# evening script content here...
 from __future__ import annotations
 import os, json, sys
 from datetime import datetime, timezone
@@ -36,7 +35,7 @@ def leg_hit(leg: dict, fx: dict):
     goals = fx.get("goals") or {}
     home = goals.get("home") or 0
     away = goals.get("away") or 0
-    total = (home or 0) + (away or 0)
+    total = home + away
     st = (fx.get("fixture") or {}).get("status") or {}
     short = st.get("short")
 
@@ -49,9 +48,9 @@ def leg_hit(leg: dict, fx: dict):
     ok = False
     if m == "Double Chance":
         if p == "1X":
-            ok = home > away or home == away
+            ok = home >= away
         elif p == "X2":
-            ok = away > home or home == away
+            ok = away >= home
         elif p == "12":
             ok = home != away
     elif m == "BTTS":
@@ -59,7 +58,7 @@ def leg_hit(leg: dict, fx: dict):
             ok = home > 0 and away > 0
         elif p == "NO":
             ok = not (home > 0 and away > 0)
-    elif m == "OVER/UNDER":
+    elif m == "Over/Under":
         pick = leg.get("pick")
         if pick == "Over 1.5":
             ok = total >= 2
@@ -67,7 +66,7 @@ def leg_hit(leg: dict, fx: dict):
             ok = total >= 3
         elif pick == "Under 3.5":
             ok = total <= 3
-    elif m == "MATCH WINNER":
+    elif m == "Match Winner":
         if p in {"HOME","1"}:
             ok = home > away
         elif p in {"AWAY","2"}:

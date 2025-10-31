@@ -1,11 +1,11 @@
 name: football-factory-morning
 on:
   schedule:
-    - cron: "0 21 * * *"
+    - cron: "0 4 * * *"
   workflow_dispatch:
 
 jobs:
-  evening:
+  morning:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -20,11 +20,12 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install httpx python-dotenv
-      - name: Evaluate daily tickets
+      - name: Generate morning feed
         env:
           API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
-          python football_factory_evening.py
+          python football_factory_morning.py
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
